@@ -7,6 +7,10 @@ const prevButton = document.querySelector(".fa-backward");
 const audio = document.getElementById("audio");
 const image = document.getElementById("image");
 
+// Song name and artist
+const songName = document.querySelector(".songContent>h3");
+const songArtist = document.querySelector(".songContent>p>span");
+
 let playing = false;
 const songs = [
   {
@@ -19,6 +23,16 @@ const songs = [
     name: "Unravel",
     artist: "Ling Toshite Sigure",
   },
+  {
+    id: 3,
+    name: "Zero",
+    artist: "Kensho Ono",
+  },
+  {
+    id: 4,
+    name: "Can Do",
+    artist: "Granrodeo",
+  },
 ];
 let currentSong = 1;
 
@@ -27,21 +41,31 @@ const replaceIcon = (element, toReplace, replaceWith) => {
   element.classList.add(`fa-${replaceWith}`);
 };
 
+const setSong = (songNo) => {
+  audio.setAttribute("src", `/music/song-${songNo}.mp3`);
+  image.setAttribute("src", `/images/song-${songNo}.jpeg`);
+  songName.textContent = songs[songNo - 1].name;
+  songArtist.textContent = songs[songNo - 1].artist;
+};
+
 const playNext = () => {
-  console.log("Next");
   if (currentSong === songs.length) {
-    console.log(currentSong);
     currentSong = songs[0].id;
   } else {
-    console.log(currentSong);
     currentSong++;
   }
 
-  audio.setAttribute("src", `/music/song-${currentSong}.mp3`);
-  image.setAttribute("src", `/images/song-${currentSong}.jpeg`);
+  setSong(currentSong);
+};
 
-  console.log(audio);
-  console.log(image);
+const playPrev = () => {
+  if (currentSong === 1) {
+    currentSong = songs[songs.length - 1].id;
+  } else {
+    currentSong--;
+  }
+
+  setSong(currentSong);
 };
 
 playButton.addEventListener("click", () => {
@@ -57,10 +81,24 @@ playButton.addEventListener("click", () => {
 });
 
 nextButton.addEventListener("click", () => {
-  console.log("Click");
   playing = false;
   audio.pause();
   playNext();
   playing = true;
   audio.play();
 });
+
+prevButton.addEventListener("click", () => {
+  playing = false;
+  audio.pause();
+  playPrev();
+  playing = true;
+  audio.play();
+});
+
+audio.onended = function () {
+  playing = false;
+  playNext();
+  playing = true;
+  audio.play();
+};
